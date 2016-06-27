@@ -21,10 +21,11 @@ use Cake\Core\Configure;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Email;
 use Cake\Network\Exception\BadRequestException;
-use Cake\Network\Http\Client;
-use Ivory\HttpAdapter\CakeHttpAdapter;
-use SparkPost\APIResponseException;
+use Http\Client\Curl\Client;
+use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\StreamFactoryDiscovery;
 use SparkPost\SparkPost;
+use SparkPost\SparkPostException;
 
 /**
  * Spark Post Transport Class
@@ -39,7 +40,8 @@ class SparkPostTransport extends AbstractTransport
      * Send mail via SparkPost REST API
      *
      * @param \Cake\Mailer\Email $email Email message
-     * @return array
+     * @return void
+     * @throws BadRequestException If the SparkPost API returns an error
      */
     public function send(Email $email)
     {
@@ -47,10 +49,10 @@ class SparkPostTransport extends AbstractTransport
         $apiKey = $this->config('apiKey');
 
         // Set up HTTP request adapter
-        $adapter = new CakeHttpAdapter(new Client());
+        $client = new Client(MessageFactoryDiscovery::find(), StreamFactoryDiscovery::find());
 
         // Create SparkPost API accessor
-        $sparkpost = new SparkPost($adapter, [ 'key' => $apiKey ]);
+        $sparkpost = new SparkPost($client, [ 'async' => false, 'key' => $apiKey ]);
 
         // Pre-process CakePHP email object fields
         $from = (array) $email->from();
@@ -63,17 +65,19 @@ class SparkPostTransport extends AbstractTransport
             'from' => $sender,
             'html' => empty($email->message('html')) ? $email->message('text') : $email->message('html'),
             'text' => $email->message('text'),
-            'subject' => $email->subject(),
-            'recipients' => $recipients
+            'subject' => $email->subject()
         ];
 
         // Send message
         try {
-            $sparkpost->transmission->send($message);
-        } catch(APIResponseException $e) {
+            $sparkpost->transmissions->post([
+                'content' => $message,
+                'recipients' => $recipients
+            ]);
+        } catch(SparkPostException $e) {
             // TODO: Determine if BRE is the best exception type
-            throw new BadRequestException(sprintf('SparkPost API error %d (%d): %s (%s)',
-                $e->getAPICode(), $e->getCode(), ucfirst($e->getAPIMessage()), $e->getAPIDescription()));
+            throw new BadRequestException(sprintf('SparkPost API error %d: %s',
+                $e->getCode(), ucfirst($e->getMessage())));
         }
     }
 }
