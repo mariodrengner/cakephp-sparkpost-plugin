@@ -25,6 +25,7 @@ guidelines (see CONTRIBUTING.md for more information).
 
 | Enhancement            | Description                                                       | Status      | Ship Date* |
 |------------------------|-------------------------------------------------------------------|-------------|------------|
+| Attachment support     | Support for attaching files to transmissions                      | IN PROGRESS | Unknown    |
 | Scrutinizer CI support | Support for Scrutinizer CI (https://scrutinizer-ci.com)           | NOT STARTED | Unknown    |
 | AppVeyor support       | Support for AppVeyor for CI on Windows (https://www.appveyor.com) | NOT STARTED | Unknown    |
 
