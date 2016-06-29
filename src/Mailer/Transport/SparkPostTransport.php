@@ -63,7 +63,7 @@ class SparkPostTransport extends AbstractTransport
             'from' => $sender,
             'html' => empty($email->message('html')) ? $email->message('text') : $email->message('html'),
             'text' => $email->message('text'),
-            'subject' => $email->subject(),
+            'subject' => mb_decode_mimeheader($email->subject()),
             'recipients' => $recipients
         ];
 
