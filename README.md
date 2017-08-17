@@ -15,7 +15,7 @@ send transactional email via a flexible and reliable REST API. You may have hear
 as [Mandrill](https://mandrillapp.com) and [SendGrid](https://sendgrid.com).
 
 Unfortunately these services are either not free or were once free but are no longer. Luckily, sending emails via
-SparkPost is free if you send less than 100,000 emails per month (which most fledgling webapps do).
+SparkPost is free if you send less than 15,000 emails per month (which most fledgling webapps do).
 
 Syntax Era developed this plugin because we use CakePHP in most of our apps,and because we noticed that there weren't
 any CakePHP plugins for SparkPost. We hope that this plugin proves to be useful to the CakePHP community at large but
