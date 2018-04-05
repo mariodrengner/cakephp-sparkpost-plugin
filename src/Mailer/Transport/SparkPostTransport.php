@@ -72,8 +72,8 @@ class SparkPostTransport extends AbstractTransport
         ];
         
         if ($replyTo) {
-	    $message['replyTo'] = $replyTo;
-	}
+			$message['replyTo'] = $replyTo;
+		}
 
         // Send message
         try {
